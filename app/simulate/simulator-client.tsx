@@ -188,7 +188,7 @@ export default function SimulatorClient() {
 
             <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 relative overflow-hidden">
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent opacity-40" />
-              <div className="mb-6 text-[0.7rem] font-semibold uppercase tracking-[0.15em] text-[var(--muted)]">🪙 Agoda Offer Builder — Drag to Negotiate</div>
+              <div className="mb-6 text-[0.7rem] font-semibold uppercase tracking-[0.15em] text-[var(--muted)]">🪙 Offer Builder — Drag to Negotiate</div>
 
               {[
                 {
@@ -288,16 +288,20 @@ export default function SimulatorClient() {
                         : `${fmt(convert(1200000, 'THB', displayCurrency), displayCurrency)} · ${row.range[2]}`}
                     </span>
                   </div>
-                  <div className="mt-2 h-[3px] rounded-full overflow-hidden flex">
-                    <div className="bg-[var(--red)] flex-[2]" />
-                    <div className="bg-[var(--accent)] flex-[3]" />
-                    <div className="bg-[var(--green)] flex-[3]" />
-                  </div>
-                  <div className="mt-1 flex justify-between text-[0.55rem] text-[var(--muted)]">
-                    <span>{row.label === 'Base salary' ? '⚠ Below visa floor' : '⚠ Below floor'}</span>
-                    <span>✓ Sweet spot</span>
-                    <span>★ Exceptional</span>
-                  </div>
+                  {row.label === 'Base salary' && (
+                    <>
+                      <div className="mt-2 h-[3px] rounded-full overflow-hidden flex">
+                        <div className="bg-[var(--red)] flex-[2]" />
+                        <div className="bg-[var(--accent)] flex-[3]" />
+                        <div className="bg-[var(--green)] flex-[3]" />
+                      </div>
+                      <div className="mt-1 flex justify-between text-[0.55rem] text-[var(--muted)]">
+                        <span>⚠ Below visa floor</span>
+                        <span>✓ Sweet spot</span>
+                        <span>★ Exceptional</span>
+                      </div>
+                    </>
+                  )}
                   {idx < 3 && <div className="mt-5 h-px bg-[var(--border)]" />}
                 </div>
               ))}
