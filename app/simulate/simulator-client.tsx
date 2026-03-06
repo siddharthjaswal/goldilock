@@ -119,27 +119,33 @@ export default function SimulatorClient() {
       <div className="mx-auto max-w-6xl px-6 py-12">
         <header className="mb-10 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="font-sans text-2xl font-extrabold text-[var(--accent)]">Goldilock Simulator</h1>
-            <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Offer builder + live verdict</p>
+            <h1 className="font-sans text-3xl font-extrabold tracking-tight text-[var(--accent)]">Goldilock Simulator</h1>
+            <p className="text-[10px] uppercase tracking-[0.35em] text-[var(--muted)]">Offer builder + live verdict</p>
           </div>
-          <div className="flex items-center gap-3">
-            <select
-              value={displayCurrency}
-              onChange={(e) => setDisplayCurrency(e.target.value)}
-              className="rounded-full border border-[var(--border)] bg-[var(--surface2)] px-4 py-2 text-xs text-[var(--text)]"
-            >
-              {Object.keys(fallbackRates).map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-            <Link href="/" className="text-xs text-[var(--muted)] underline">Edit baseline</Link>
+          <div className="flex flex-col items-end gap-2">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1">
+              <span className={`text-[11px] font-semibold ${displayCurrency === baseCurrency ? 'text-[var(--accent)]' : 'text-[var(--muted)]'}`}>
+                {baseCurrency}
+              </span>
+              <select
+                value={displayCurrency}
+                onChange={(e) => setDisplayCurrency(e.target.value)}
+                className="rounded-full border border-[var(--border)] bg-[var(--surface2)] px-3 py-1 text-[10px] text-[var(--text)]"
+              >
+                {Object.keys(fallbackRates).map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+            <Link href="/" className="text-[10px] text-[var(--muted)] underline">Edit baseline</Link>
           </div>
         </header>
 
         <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
           <div>
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
-              <div className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Current compensation</div>
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 relative overflow-hidden">
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent opacity-40" />
+              <div className="mb-5 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">Current compensation</div>
               <div className="grid gap-3 sm:grid-cols-4">
                 {[
                   { label: 'Base', val: currentBase },
@@ -167,8 +173,9 @@ export default function SimulatorClient() {
               </div>
             </div>
 
-            <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
-              <div className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Offer builder — drag to negotiate</div>
+            <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 relative overflow-hidden">
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent opacity-40" />
+              <div className="mb-5 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">Offer builder — drag to negotiate</div>
 
               {[
                 {
@@ -273,9 +280,10 @@ export default function SimulatorClient() {
           </div>
 
           <div className="space-y-4 lg:sticky lg:top-6">
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 text-center">
-              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">Total compensation (Year 1)</div>
-              <div className="mt-2 font-sans text-3xl font-extrabold text-[var(--green)]">{fmt(displayOffer, displayCurrency)}</div>
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 text-center relative overflow-hidden">
+              <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[var(--green)] to-transparent opacity-40" />
+              <div className="text-[10px] uppercase tracking-[0.25em] text-[var(--muted)]">Total compensation (Year 1)</div>
+              <div className="mt-2 font-sans text-4xl font-extrabold text-[var(--green)]">{fmt(displayOffer, displayCurrency)}</div>
               <div className={`mt-2 inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs ${changePct >= 0 ? 'border-[rgba(64,240,160,0.3)] bg-[rgba(64,240,160,0.1)] text-[var(--green)]' : 'border-[rgba(240,64,96,0.3)] bg-[rgba(240,64,96,0.1)] text-[var(--red)]'}`}>
                 {changePct >= 0 ? '↑' : '↓'} {Math.abs(changePct).toFixed(0)}%
               </div>
@@ -306,8 +314,8 @@ export default function SimulatorClient() {
 
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 text-center">
               <div className="text-3xl">{v.emoji}</div>
-              <div className="mt-2 font-sans text-lg font-bold" style={{ color: v.color }}>{v.title}</div>
-              <p className="mt-1 text-xs text-[var(--muted)]">{v.desc}</p>
+              <div className="mt-2 font-sans text-lg font-extrabold" style={{ color: v.color }}>{v.title}</div>
+              <p className="mt-1 text-[11px] leading-relaxed text-[var(--muted)]">{v.desc}</p>
             </div>
           </div>
         </div>
