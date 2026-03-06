@@ -137,6 +137,10 @@ export default function SimulatorClient() {
                 ))}
               </select>
             </div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(64,192,240,0.35)] bg-[rgba(64,192,240,0.12)] px-3 py-1 text-[10px] text-[var(--accent2)]">
+              <span>⚡</span>
+              <span>Cloud‑free · Local‑only</span>
+            </div>
             <Link href="/" className="text-[10px] text-[var(--muted)] underline">Edit baseline</Link>
           </div>
         </header>
@@ -250,6 +254,16 @@ export default function SimulatorClient() {
                     <span>{row.range[0]}</span>
                     <span>{row.range[1]}</span>
                     <span>{row.range[2]}</span>
+                  </div>
+                  <div className="mt-2 h-[3px] rounded-full overflow-hidden flex">
+                    <div className="bg-[var(--red)] flex-[2]" />
+                    <div className="bg-[var(--accent)] flex-[3]" />
+                    <div className="bg-[var(--green)] flex-[3]" />
+                  </div>
+                  <div className="mt-1 flex justify-between text-[9px] text-[var(--muted)]">
+                    <span>⚠ Below floor</span>
+                    <span>✓ Sweet spot</span>
+                    <span>★ Exceptional</span>
                   </div>
                 </div>
               ))}

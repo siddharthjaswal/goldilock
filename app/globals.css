@@ -60,8 +60,18 @@ input[type=range]::-webkit-slider-thumb {
   border-radius: 50%;
   background: var(--accent);
   box-shadow: 0 0 0 3px rgba(240,192,64,0.2), 0 0 20px rgba(240,192,64,0.3);
+  transition: box-shadow 0.2s ease;
 }
 
 input[type=range]::-webkit-slider-thumb:hover {
   box-shadow: 0 0 0 5px rgba(240,192,64,0.3), 0 0 30px rgba(240,192,64,0.4);
+}
+
+input[type=range]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: none;
+  box-shadow: 0 0 0 3px rgba(240,192,64,0.2), 0 0 20px rgba(240,192,64,0.3);
 }
