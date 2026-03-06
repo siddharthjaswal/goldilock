@@ -188,7 +188,7 @@ export default function SimulatorClient() {
 
             <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 relative overflow-hidden">
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent opacity-40" />
-              <div className="mb-5 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">Offer builder — drag to negotiate</div>
+              <div className="mb-6 text-[0.7rem] font-semibold uppercase tracking-[0.15em] text-[var(--muted)]">🪙 Agoda Offer Builder — Drag to Negotiate</div>
 
               {[
                 {
@@ -235,20 +235,20 @@ export default function SimulatorClient() {
                   range: ['Not covered', 'ESOP whole', 'Full upside'],
                   suffix: '',
                 },
-              ].map((row) => (
+              ].map((row, idx) => (
                 <div key={row.label} className="mb-6">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-sm font-sans font-semibold text-[var(--text)]">
+                    <div className="flex items-center gap-2 text-[0.9rem] font-sans font-semibold text-[var(--text)]">
                       {row.label}
-                      <span className="rounded-full border border-[var(--border)] bg-[var(--surface2)] px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">
+                      <span className="rounded-full border border-[var(--border)] bg-[var(--surface2)] px-3 py-1 text-[0.6rem] uppercase tracking-[0.2em] text-[var(--muted)]">
                         {row.tag}
                       </span>
                     </div>
-                    <div className="text-[var(--accent)] font-semibold text-sm">
+                    <div className="text-[var(--accent)] font-semibold text-[1rem]">
                       {row.suffix === '%' ? `${row.value}${row.suffix}` : fmt(convert(row.value, 'THB', displayCurrency), displayCurrency)}
                     </div>
                   </div>
-                  <div className="mt-3">
+                  <div className="mt-4">
                     <input
                       type="range"
                       min={row.min}
@@ -259,7 +259,7 @@ export default function SimulatorClient() {
                       style={{ ['--pct' as any]: `${((row.value - row.min) / (row.max - row.min)) * 100}%` }}
                     />
                   </div>
-                  <div className="mt-2 flex justify-between text-[10px] text-[var(--muted)]">
+                  <div className="mt-3 flex justify-between text-[0.6rem] text-[var(--muted)]">
                     <span>
                       {row.label === 'Base salary'
                         ? `${fmt(convert(180000, 'THB', displayCurrency), displayCurrency)} · ${row.range[0]}`
@@ -293,11 +293,12 @@ export default function SimulatorClient() {
                     <div className="bg-[var(--accent)] flex-[3]" />
                     <div className="bg-[var(--green)] flex-[3]" />
                   </div>
-                  <div className="mt-1 flex justify-between text-[9px] text-[var(--muted)]">
-                    <span>⚠ Below floor</span>
+                  <div className="mt-1 flex justify-between text-[0.55rem] text-[var(--muted)]">
+                    <span>⚠ Below visa floor</span>
                     <span>✓ Sweet spot</span>
                     <span>★ Exceptional</span>
                   </div>
+                  {idx < 3 && <div className="mt-5 h-px bg-[var(--border)]" />}
                 </div>
               ))}
             </div>
