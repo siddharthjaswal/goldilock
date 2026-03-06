@@ -211,8 +211,8 @@ export default function SimulatorClient() {
                   tag: 'Monthly',
                   value: baseMonthly,
                   set: setBaseMonthly,
-                  min: 150000,
-                  max: 450000,
+                  min: 180000,
+                  max: 380000,
                   step: 5000,
                   range: ['Lowball', 'Target', 'Goldmine'],
                   suffix: '',
@@ -223,7 +223,7 @@ export default function SimulatorClient() {
                   value: bonusPct,
                   set: setBonusPct,
                   min: 0,
-                  max: 35,
+                  max: 30,
                   step: 1,
                   range: ['None', 'Standard', 'Top band'],
                   suffix: '%',
@@ -275,9 +275,33 @@ export default function SimulatorClient() {
                     />
                   </div>
                   <div className="mt-2 flex justify-between text-[10px] text-[var(--muted)]">
-                    <span>{row.range[0]}</span>
-                    <span>{row.range[1]}</span>
-                    <span>{row.range[2]}</span>
+                    <span>
+                      {row.label === 'Base salary'
+                        ? `${fmt(convert(row.min, baseCurrency, displayCurrency), displayCurrency)} · ${row.range[0]}`
+                        : row.label === 'Performance bonus'
+                        ? `0% · ${row.range[0]}`
+                        : row.label === 'Stock / RSUs'
+                        ? `${fmt(convert(row.min, baseCurrency, displayCurrency), displayCurrency)} · ${row.range[0]}`
+                        : `${fmt(convert(row.min, baseCurrency, displayCurrency), displayCurrency)} · ${row.range[0]}`}
+                    </span>
+                    <span>
+                      {row.label === 'Base salary'
+                        ? `${fmt(convert(280000, baseCurrency, displayCurrency), displayCurrency)} · ${row.range[1]}`
+                        : row.label === 'Performance bonus'
+                        ? `15–20% · ${row.range[1]}`
+                        : row.label === 'Stock / RSUs'
+                        ? `${fmt(convert(850000, baseCurrency, displayCurrency), displayCurrency)} · ${row.range[1]}`
+                        : `${fmt(convert(700000, baseCurrency, displayCurrency), displayCurrency)} · ${row.range[1]}`}
+                    </span>
+                    <span>
+                      {row.label === 'Base salary'
+                        ? `${fmt(convert(row.max, baseCurrency, displayCurrency), displayCurrency)} · ${row.range[2]}`
+                        : row.label === 'Performance bonus'
+                        ? `30% · ${row.range[2]}`
+                        : row.label === 'Stock / RSUs'
+                        ? `${fmt(convert(1500000, baseCurrency, displayCurrency), displayCurrency)} · ${row.range[2]}`
+                        : `${fmt(convert(1200000, baseCurrency, displayCurrency), displayCurrency)} · ${row.range[2]}`}
+                    </span>
                   </div>
                   <div className="mt-2 h-[3px] rounded-full overflow-hidden flex">
                     <div className="bg-[var(--red)] flex-[2]" />
