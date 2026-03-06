@@ -17,6 +17,7 @@ const countries = [
 export default function Home() {
   const router = useRouter();
   const [country, setCountry] = useState('IN');
+  const [offerCountry, setOfferCountry] = useState('TH');
   const [currency, setCurrency] = useState('INR');
   const [base, setBase] = useState('');
   const [bonus, setBonus] = useState('');
@@ -25,6 +26,7 @@ export default function Home() {
   const handleContinue = () => {
     const params = new URLSearchParams({
       country,
+      offerCountry,
       currency,
       base,
       bonus,
@@ -54,10 +56,23 @@ export default function Home() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="text-xs text-[var(--muted)]">
-                Country
+                Current country (tax)
                 <select
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
+                  className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm text-[var(--text)]"
+                >
+                  {countries.map((c) => (
+                    <option key={c.code} value={c.code}>{c.name}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="text-xs text-[var(--muted)]">
+                Offer country (tax)
+                <select
+                  value={offerCountry}
+                  onChange={(e) => setOfferCountry(e.target.value)}
                   className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm text-[var(--text)]"
                 >
                   {countries.map((c) => (
@@ -113,6 +128,13 @@ export default function Home() {
                 Tax profile
                 <div className="mt-2 rounded-lg border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm text-[var(--text)]">
                   {countries.find((c) => c.code === country)?.name} · {country === 'IN' ? 'New Regime' : `${(countries.find((c) => c.code === country)?.tax || 0) * 100}%`}
+                </div>
+              </label>
+
+              <label className="text-xs text-[var(--muted)]">
+                Offer tax profile
+                <div className="mt-2 rounded-lg border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm text-[var(--text)]">
+                  {countries.find((c) => c.code === offerCountry)?.name} · {offerCountry === 'IN' ? 'New Regime' : `${(countries.find((c) => c.code === offerCountry)?.tax || 0) * 100}%`}
                 </div>
               </label>
             </div>

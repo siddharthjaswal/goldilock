@@ -41,6 +41,7 @@ const currencySymbols: Record<string, string> = {
 export default function SimulatorClient() {
   const params = useSearchParams();
   const country = params.get('country') || 'IN';
+  const offerCountry = params.get('offerCountry') || 'TH';
   const baseCurrency = params.get('currency') || 'USD';
   const currentBase = Number(params.get('base') || 0);
   const currentBonus = Number(params.get('bonus') || 0);
@@ -84,7 +85,7 @@ export default function SimulatorClient() {
   const offer = calcOffer({ baseMonthly, bonusPct, equityAnnual, signing });
   const offerTC = offer.offerTotal;
   const recurring = offer.recurring;
-  const tax = country === 'IN' ? indiaTax(recurring) : recurring * (taxRates[country] || 0.2);
+  const tax = offerCountry === 'IN' ? indiaTax(recurring) : recurring * (taxRates[offerCountry] || 0.2);
   const takeHome = recurring - tax + signing;
 
   const offerInBase = convert(offerTC, 'THB', baseCurrency);
@@ -138,7 +139,10 @@ export default function SimulatorClient() {
             </div>
             <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(64,192,240,0.35)] bg-[rgba(64,192,240,0.12)] px-3 py-1 text-[10px] text-[var(--accent2)]">
               <span>⚡</span>
-              <span>India: New Regime · Thailand: 17% LTR Flat</span>
+              <span>
+                {country === 'IN' ? 'India: New Regime' : `${country}: ${((taxRates[country] || 0.2) * 100).toFixed(0)}%`} ·
+                {offerCountry === 'IN' ? ' India: New Regime' : ` ${offerCountry}: ${((taxRates[offerCountry] || 0.2) * 100).toFixed(0)}%`}
+              </span>
             </div>
             <Link href="/" className="text-[10px] text-[var(--muted)] underline">Edit baseline</Link>
           </div>
@@ -151,16 +155,17 @@ export default function SimulatorClient() {
               <div className="mb-5 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">Current compensation</div>
               <div className="grid gap-3 sm:grid-cols-4">
                 {[
-                  { label: 'Base', val: currentBase },
-                  { label: 'Bonus', val: currentBonus },
-                  { label: 'Equity', val: currentEquity },
-                  { label: 'Total', val: currentTC },
+                  { label: 'Base', val: currentBase, sub: 'Annual fixed' },
+                  { label: 'Bonus', val: currentBonus, sub: 'Performance' },
+                  { label: 'Equity', val: currentEquity, sub: 'Annualized' },
+                  { label: 'Total CTC', val: currentTC, sub: 'Pre-tax' },
                 ].map((item) => (
                   <div key={item.label} className="rounded-xl border border-[var(--border)] bg-[var(--surface2)] p-3">
                     <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">{item.label}</div>
-                    <div className={`mt-2 font-sans text-sm font-bold ${item.label === 'Total' ? 'text-[var(--accent2)]' : 'text-[var(--text)]'}`}>
+                    <div className={`mt-2 font-sans text-sm font-bold ${item.label === 'Total CTC' ? 'text-[var(--accent2)]' : 'text-[var(--text)]'}`}>
                       {fmt(convert(item.val, baseCurrency, displayCurrency), displayCurrency)}
                     </div>
+                    <div className="mt-1 text-[10px] text-[var(--muted)]">{item.sub}</div>
                   </div>
                 ))}
               </div>
@@ -170,7 +175,7 @@ export default function SimulatorClient() {
                   <div className="mt-1 font-sans text-sm font-bold text-[var(--green)]">
                     {fmt(convert(currentTakeHome, baseCurrency, displayCurrency), displayCurrency)}
                   </div>
-                  <div className="mt-1 text-[10px] text-[var(--muted)]">After New Regime tax</div>
+                  <div className="mt-1 text-[10px] text-[var(--muted)]">After {country === 'IN' ? 'New Regime' : 'Tax'} tax</div>
                 </div>
                 <div className="text-right">
                   <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">Monthly in‑hand</div>
@@ -354,6 +359,18 @@ export default function SimulatorClient() {
                   <span className="text-[var(--muted)]">Monthly in‑hand</span>
                   <span className="font-semibold text-[var(--green)]">{fmt(convert(takeHome / 12, 'THB', displayCurrency), displayCurrency)}</span>
                 </div>
+              </div>
+              <div className="mt-3 rounded-lg border border-[rgba(64,240,160,0.2)] bg-[rgba(64,240,160,0.05)] px-3 py-2 text-[10px] text-[var(--muted)]">
+                {(() => {
+                  const diff = convert(takeHome / 12, 'THB', baseCurrency) - (currentTakeHome / 12);
+                  const label = diff >= 0 ? '+' : '−';
+                  const amount = fmt(Math.abs(diff), baseCurrency);
+                  return (
+                    <span style={{ color: diff >= 0 ? 'var(--green)' : 'var(--red)', fontWeight: 600 }}>
+                      {label}{amount}/mo {diff >= 0 ? 'more' : 'less'} than {country}
+                    </span>
+                  );
+                })()}
               </div>
             </div>
 
