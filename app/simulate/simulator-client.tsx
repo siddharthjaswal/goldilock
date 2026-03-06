@@ -95,15 +95,24 @@ export default function SimulatorClient() {
   const displayCurrent = useMemo(() => convert(currentTC, baseCurrency, displayCurrency), [currentTC, baseCurrency, displayCurrency, rates]);
   const displayOffer = useMemo(() => convert(offerTC, baseCurrency, displayCurrency), [offerTC, baseCurrency, displayCurrency, rates]);
 
+  const changePct = ((offerTC - currentTC) / Math.max(currentTC, 1)) * 100;
+
   const verdict = () => {
-    const pct = ((offerTC - currentTC) / Math.max(currentTC, 1)) * 100;
-    if (pct < 5) return { emoji: '🚨', title: 'Lowball', desc: 'This doesn’t clear the bar. Push hard or walk.' };
-    if (pct < 15) return { emoji: '😬', title: 'Meh', desc: 'Marginal improvement. Negotiate base or signing.' };
-    if (pct < 30) return { emoji: '✅', title: 'Strong', desc: 'This is a meaningful step up.' };
-    return { emoji: '💎', title: 'Goldmine', desc: 'Exceptional package. Lock it in.' };
+    if (changePct < 5) return { emoji: '🚨', title: 'Lowball — Walk', desc: 'This doesn’t clear the bar. Push hard or walk.', color: 'var(--red)' };
+    if (changePct < 15) return { emoji: '😬', title: 'Meh — Push Back', desc: 'Marginal improvement. Negotiate base or signing.', color: 'var(--red)' };
+    if (changePct < 30) return { emoji: '✅', title: 'Strong Offer', desc: 'Meaningful step up. Solid if role fits.', color: 'var(--green)' };
+    return { emoji: '💎', title: 'Goldmine', desc: 'Exceptional package. Lock it in.', color: '#b040f0' };
   };
 
   const v = verdict();
+
+  const bars = [
+    { id: 'base', label: 'Base', value: baseAnnual },
+    { id: 'bonus', label: 'Bonus', value: bonusAnnual },
+    { id: 'equity', label: 'RSUs', value: equityAnnual },
+    { id: 'sign', label: 'Signing', value: signing },
+  ];
+  const maxBar = Math.max(...bars.map((b) => b.value), 1);
 
   return (
     <div className="relative z-10">
@@ -130,7 +139,7 @@ export default function SimulatorClient() {
         <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
           <div>
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
-              <div className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Current baseline</div>
+              <div className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Current compensation</div>
               <div className="grid gap-3 sm:grid-cols-4">
                 {[
                   { label: 'Base', val: currentBase },
@@ -140,7 +149,7 @@ export default function SimulatorClient() {
                 ].map((item) => (
                   <div key={item.label} className="rounded-xl border border-[var(--border)] bg-[var(--surface2)] p-3">
                     <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">{item.label}</div>
-                    <div className="mt-2 font-sans text-sm font-bold text-[var(--text)]">
+                    <div className={`mt-2 font-sans text-sm font-bold ${item.label === 'Total' ? 'text-[var(--accent2)]' : 'text-[var(--text)]'}`}>
                       {fmt(convert(item.val, baseCurrency, displayCurrency), displayCurrency)}
                     </div>
                   </div>
@@ -148,61 +157,74 @@ export default function SimulatorClient() {
               </div>
               <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface2)] p-4 flex justify-between">
                 <div>
-                  <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">Take‑home</div>
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">Annual take‑home</div>
                   <div className="mt-1 font-sans text-sm font-bold text-[var(--green)]">{fmt(convert(currentTakeHome, baseCurrency, displayCurrency), displayCurrency)}</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">Tax</div>
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">Tax rate</div>
                   <div className="mt-1 text-xs text-[var(--red)]">{(taxRates[country] || 0.2) * 100}%</div>
                 </div>
               </div>
             </div>
 
             <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
-              <div className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Offer builder</div>
+              <div className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Offer builder — drag to negotiate</div>
 
               {[
                 {
-                  label: 'Base salary (monthly)',
+                  label: 'Base salary',
+                  tag: 'Monthly',
                   value: baseMonthly,
                   set: setBaseMonthly,
                   min: 150000,
                   max: 450000,
                   step: 5000,
+                  range: ['Lowball', 'Target', 'Goldmine'],
                   suffix: '',
                 },
                 {
-                  label: 'Bonus (% of base)',
+                  label: 'Performance bonus',
+                  tag: '% of base',
                   value: bonusPct,
                   set: setBonusPct,
                   min: 0,
                   max: 35,
                   step: 1,
+                  range: ['None', 'Standard', 'Top band'],
                   suffix: '%',
                 },
                 {
-                  label: 'Equity / RSUs (annual)',
+                  label: 'Stock / RSUs',
+                  tag: 'Annual grant',
                   value: equityAnnual,
                   set: setEquityAnnual,
                   min: 0,
                   max: 1500000,
                   step: 50000,
+                  range: ['No equity', 'Target', 'Exceptional'],
                   suffix: '',
                 },
                 {
-                  label: 'Signing bonus (one‑time)',
+                  label: 'Signing bonus',
+                  tag: 'One‑time',
                   value: signing,
                   set: setSigning,
                   min: 0,
                   max: 1200000,
                   step: 50000,
+                  range: ['Not covered', 'ESOP whole', 'Full upside'],
                   suffix: '',
                 },
               ].map((row) => (
                 <div key={row.label} className="mb-6">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="font-sans font-semibold text-[var(--text)]">{row.label}</div>
-                    <div className="text-[var(--accent)] font-semibold">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm font-sans font-semibold text-[var(--text)]">
+                      {row.label}
+                      <span className="rounded-full border border-[var(--border)] bg-[var(--surface2)] px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">
+                        {row.tag}
+                      </span>
+                    </div>
+                    <div className="text-[var(--accent)] font-semibold text-sm">
                       {row.suffix === '%' ? `${row.value}${row.suffix}` : fmt(convert(row.value, baseCurrency, displayCurrency), displayCurrency)}
                     </div>
                   </div>
@@ -217,27 +239,66 @@ export default function SimulatorClient() {
                       style={{ ['--pct' as any]: `${((row.value - row.min) / (row.max - row.min)) * 100}%` }}
                     />
                   </div>
+                  <div className="mt-2 flex justify-between text-[10px] text-[var(--muted)]">
+                    <span>{row.range[0]}</span>
+                    <span>{row.range[1]}</span>
+                    <span>{row.range[2]}</span>
+                  </div>
                 </div>
               ))}
             </div>
+
+            <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
+              <div className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Comp breakdown</div>
+              <div className="space-y-3">
+                {bars.map((b) => (
+                  <div key={b.id} className="flex items-center gap-3">
+                    <div className="w-14 text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">{b.label}</div>
+                    <div className="flex-1 h-2 rounded-full bg-[var(--surface2)] overflow-hidden">
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${(b.value / maxBar) * 100}%`,
+                          background: b.id === 'base' ? 'var(--accent2)' : b.id === 'bonus' ? 'var(--accent)' : b.id === 'equity' ? 'var(--green)' : '#b040f0',
+                        }}
+                      />
+                    </div>
+                    <div className="w-20 text-right text-xs font-semibold text-[var(--text)]">
+                      {fmt(convert(b.value, baseCurrency, displayCurrency), displayCurrency)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4 lg:sticky lg:top-6">
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 text-center">
-              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">Total comp (Year 1)</div>
+              <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">Total compensation (Year 1)</div>
               <div className="mt-2 font-sans text-3xl font-extrabold text-[var(--green)]">{fmt(displayOffer, displayCurrency)}</div>
+              <div className={`mt-2 inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs ${changePct >= 0 ? 'border-[rgba(64,240,160,0.3)] bg-[rgba(64,240,160,0.1)] text-[var(--green)]' : 'border-[rgba(240,64,96,0.3)] bg-[rgba(240,64,96,0.1)] text-[var(--red)]'}`}>
+                {changePct >= 0 ? '↑' : '↓'} {Math.abs(changePct).toFixed(0)}%
+              </div>
               <div className="mt-2 text-xs text-[var(--muted)]">vs baseline {fmt(displayCurrent, displayCurrency)}</div>
             </div>
 
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Take‑home</div>
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Take‑home after tax</div>
               <div className="mt-3 space-y-2 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-[var(--muted)]">Annual</span>
+                  <span className="text-[var(--muted)]">Gross annual</span>
+                  <span className="font-semibold text-[var(--text)]">{fmt(convert(recurring + signing, baseCurrency, displayCurrency), displayCurrency)}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[var(--muted)]">Tax paid</span>
+                  <span className="font-semibold text-[var(--red)]">−{fmt(convert(tax, baseCurrency, displayCurrency), displayCurrency)}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[var(--muted)]">Annual in‑hand</span>
                   <span className="font-semibold text-[var(--green)]">{fmt(convert(takeHome, baseCurrency, displayCurrency), displayCurrency)}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[var(--muted)]">Monthly</span>
+                  <span className="text-[var(--muted)]">Monthly in‑hand</span>
                   <span className="font-semibold text-[var(--green)]">{fmt(convert(takeHome / 12, baseCurrency, displayCurrency), displayCurrency)}</span>
                 </div>
               </div>
@@ -245,7 +306,7 @@ export default function SimulatorClient() {
 
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 text-center">
               <div className="text-3xl">{v.emoji}</div>
-              <div className="mt-2 font-sans text-lg font-bold text-[var(--accent)]">{v.title}</div>
+              <div className="mt-2 font-sans text-lg font-bold" style={{ color: v.color }}>{v.title}</div>
               <p className="mt-1 text-xs text-[var(--muted)]">{v.desc}</p>
             </div>
           </div>
