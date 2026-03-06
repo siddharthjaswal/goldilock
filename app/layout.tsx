@@ -16,6 +16,12 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   title: "Goldilock Zone",
   description: "Salary negotiation simulator",
+  themeColor: "#0a0a0f",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
