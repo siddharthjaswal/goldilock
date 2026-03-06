@@ -17,13 +17,35 @@ const fallbackRates: Record<string, number> = {
 };
 
 const taxRates: Record<string, number> = {
-  IN: 0.22,
   US: 0.28,
   UK: 0.3,
   SG: 0.12,
   TH: 0.17,
   AE: 0.0,
   DE: 0.32,
+};
+
+const indiaTax = (income: number) => {
+  const taxable = Math.max(0, income - 75000);
+  let tax = 0;
+  const slabs: Array<[number, number]> = [
+    [300000, 0],
+    [400000, 0.05],
+    [300000, 0.1],
+    [200000, 0.15],
+    [300000, 0.2],
+    [Infinity, 0.3],
+  ];
+  let remaining = taxable;
+  for (const [size, rate] of slabs) {
+    if (remaining <= 0) break;
+    const chunk = Math.min(remaining, size);
+    tax += chunk * rate;
+    remaining -= chunk;
+  }
+  if (taxable <= 700000) tax = 0;
+  tax = tax * 1.04;
+  return tax;
 };
 
 const currencySymbols: Record<string, string> = {
@@ -82,14 +104,14 @@ export default function SimulatorClient() {
   };
 
   const currentTC = currentBase + currentBonus + currentEquity;
-  const currentTax = currentTC * (taxRates[country] || 0.2);
+  const currentTax = country === 'IN' ? indiaTax(currentTC) : currentTC * (taxRates[country] || 0.2);
   const currentTakeHome = currentTC - currentTax;
 
   const baseAnnual = baseMonthly * 12;
   const bonusAnnual = baseAnnual * (bonusPct / 100);
   const offerTC = baseAnnual + bonusAnnual + equityAnnual + signing;
   const recurring = baseAnnual + bonusAnnual + equityAnnual;
-  const tax = recurring * (taxRates[country] || 0.2);
+  const tax = country === 'IN' ? indiaTax(recurring) : recurring * (taxRates[country] || 0.2);
   const takeHome = recurring - tax + signing;
 
   const displayCurrent = useMemo(() => convert(currentTC, baseCurrency, displayCurrency), [currentTC, baseCurrency, displayCurrency, rates]);
@@ -172,7 +194,9 @@ export default function SimulatorClient() {
                 </div>
                 <div className="text-right">
                   <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">Tax rate</div>
-                  <div className="mt-1 text-xs text-[var(--red)]">{(taxRates[country] || 0.2) * 100}%</div>
+                  <div className="mt-1 text-xs text-[var(--red)]">
+                    {country === 'IN' ? 'New Regime' : `${(taxRates[country] || 0.2) * 100}%`}
+                  </div>
                 </div>
               </div>
             </div>

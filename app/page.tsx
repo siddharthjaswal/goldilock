@@ -109,7 +109,7 @@ export default function Home() {
               <label className="text-xs text-[var(--muted)]">
                 Tax profile
                 <div className="mt-2 rounded-lg border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm text-[var(--text)]">
-                  {countries.find((c) => c.code === country)?.name} · {(countries.find((c) => c.code === country)?.tax || 0) * 100}%
+                  {countries.find((c) => c.code === country)?.name} · {country === 'IN' ? 'New Regime' : `${(countries.find((c) => c.code === country)?.tax || 0) * 100}%`}
                 </div>
               </label>
             </div>
