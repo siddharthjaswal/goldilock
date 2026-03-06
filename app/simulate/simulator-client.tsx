@@ -115,7 +115,7 @@ export default function SimulatorClient() {
   const takeHome = recurring - tax + signing;
 
   const displayCurrent = useMemo(() => convert(currentTC, baseCurrency, displayCurrency), [currentTC, baseCurrency, displayCurrency, rates]);
-  const displayOffer = useMemo(() => convert(offerTC, baseCurrency, displayCurrency), [offerTC, baseCurrency, displayCurrency, rates]);
+  const displayOffer = useMemo(() => convert(offerTC, 'THB', displayCurrency), [offerTC, displayCurrency, rates]);
 
   const changePct = ((offerTC - currentTC) / Math.max(currentTC, 1)) * 100;
 
@@ -260,7 +260,7 @@ export default function SimulatorClient() {
                       </span>
                     </div>
                     <div className="text-[var(--accent)] font-semibold text-sm">
-                      {row.suffix === '%' ? `${row.value}${row.suffix}` : fmt(convert(row.value, baseCurrency, displayCurrency), displayCurrency)}
+                      {row.suffix === '%' ? `${row.value}${row.suffix}` : fmt(convert(row.value, 'THB', displayCurrency), displayCurrency)}
                     </div>
                   </div>
                   <div className="mt-3">
@@ -277,30 +277,30 @@ export default function SimulatorClient() {
                   <div className="mt-2 flex justify-between text-[10px] text-[var(--muted)]">
                     <span>
                       {row.label === 'Base salary'
-                        ? `฿180k · ${row.range[0]}`
+                        ? `${fmt(convert(180000, 'THB', displayCurrency), displayCurrency)} · ${row.range[0]}`
                         : row.label === 'Performance bonus'
                         ? `0% · ${row.range[0]}`
                         : row.label === 'Stock / RSUs'
-                        ? `฿0 · ${row.range[0]}`
-                        : `฿0 · ${row.range[0]}`}
+                        ? `${fmt(convert(0, 'THB', displayCurrency), displayCurrency)} · ${row.range[0]}`
+                        : `${fmt(convert(0, 'THB', displayCurrency), displayCurrency)} · ${row.range[0]}`}
                     </span>
                     <span>
                       {row.label === 'Base salary'
-                        ? `฿280k · ${row.range[1]}`
+                        ? `${fmt(convert(280000, 'THB', displayCurrency), displayCurrency)} · ${row.range[1]}`
                         : row.label === 'Performance bonus'
                         ? `15–20% · ${row.range[1]}`
                         : row.label === 'Stock / RSUs'
-                        ? `฿850k · ${row.range[1]}`
-                        : `฿700k · ${row.range[1]}`}
+                        ? `${fmt(convert(850000, 'THB', displayCurrency), displayCurrency)} · ${row.range[1]}`
+                        : `${fmt(convert(700000, 'THB', displayCurrency), displayCurrency)} · ${row.range[1]}`}
                     </span>
                     <span>
                       {row.label === 'Base salary'
-                        ? `฿380k · ${row.range[2]}`
+                        ? `${fmt(convert(380000, 'THB', displayCurrency), displayCurrency)} · ${row.range[2]}`
                         : row.label === 'Performance bonus'
                         ? `30% · ${row.range[2]}`
                         : row.label === 'Stock / RSUs'
-                        ? `฿1.5M · ${row.range[2]}`
-                        : `฿1.2M · ${row.range[2]}`}
+                        ? `${fmt(convert(1500000, 'THB', displayCurrency), displayCurrency)} · ${row.range[2]}`
+                        : `${fmt(convert(1200000, 'THB', displayCurrency), displayCurrency)} · ${row.range[2]}`}
                     </span>
                   </div>
                   <div className="mt-2 h-[3px] rounded-full overflow-hidden flex">
@@ -333,7 +333,7 @@ export default function SimulatorClient() {
                       />
                     </div>
                     <div className="w-20 text-right text-xs font-semibold text-[var(--text)]">
-                      {fmt(convert(b.value, baseCurrency, displayCurrency), displayCurrency)}
+                      {fmt(convert(b.value, 'THB', displayCurrency), displayCurrency)}
                     </div>
                   </div>
                 ))}
@@ -357,19 +357,19 @@ export default function SimulatorClient() {
               <div className="mt-3 space-y-2 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="text-[var(--muted)]">Gross annual</span>
-                  <span className="font-semibold text-[var(--text)]">{fmt(convert(recurring + signing, baseCurrency, displayCurrency), displayCurrency)}</span>
+                  <span className="font-semibold text-[var(--text)]">{fmt(convert(recurring + signing, 'THB', displayCurrency), displayCurrency)}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-[var(--muted)]">Tax paid</span>
-                  <span className="font-semibold text-[var(--red)]">−{fmt(convert(tax, baseCurrency, displayCurrency), displayCurrency)}</span>
+                  <span className="font-semibold text-[var(--red)]">−{fmt(convert(tax, 'THB', displayCurrency), displayCurrency)}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-[var(--muted)]">Annual in‑hand</span>
-                  <span className="font-semibold text-[var(--green)]">{fmt(convert(takeHome, baseCurrency, displayCurrency), displayCurrency)}</span>
+                  <span className="font-semibold text-[var(--green)]">{fmt(convert(takeHome, 'THB', displayCurrency), displayCurrency)}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-[var(--muted)]">Monthly in‑hand</span>
-                  <span className="font-semibold text-[var(--green)]">{fmt(convert(takeHome / 12, baseCurrency, displayCurrency), displayCurrency)}</span>
+                  <span className="font-semibold text-[var(--green)]">{fmt(convert(takeHome / 12, 'THB', displayCurrency), displayCurrency)}</span>
                 </div>
               </div>
             </div>
