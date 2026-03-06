@@ -18,9 +18,9 @@ export default function Home() {
   const router = useRouter();
   const [country, setCountry] = useState('IN');
   const [currency, setCurrency] = useState('INR');
-  const [base, setBase] = useState('6200000');
-  const [bonus, setBonus] = useState('200000');
-  const [equity, setEquity] = useState('1980000');
+  const [base, setBase] = useState('');
+  const [bonus, setBonus] = useState('');
+  const [equity, setEquity] = useState('');
 
   const handleContinue = () => {
     const params = new URLSearchParams({
@@ -84,6 +84,7 @@ export default function Home() {
                 <input
                   value={base}
                   onChange={(e) => setBase(e.target.value)}
+                  placeholder="e.g. 6200000"
                   className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm text-[var(--text)]"
                 />
               </label>
@@ -93,6 +94,7 @@ export default function Home() {
                 <input
                   value={bonus}
                   onChange={(e) => setBonus(e.target.value)}
+                  placeholder="e.g. 200000"
                   className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm text-[var(--text)]"
                 />
               </label>
@@ -102,6 +104,7 @@ export default function Home() {
                 <input
                   value={equity}
                   onChange={(e) => setEquity(e.target.value)}
+                  placeholder="e.g. 1980000"
                   className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm text-[var(--text)]"
                 />
               </label>
