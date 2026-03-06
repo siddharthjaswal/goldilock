@@ -341,17 +341,23 @@ export default function SimulatorClient() {
             </div>
 
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Take‑home after tax</div>
-              <div className="mt-3 space-y-2 text-xs">
-                <div className="flex items-center justify-between">
+              <div className="text-[0.65rem] font-semibold uppercase tracking-[0.15em] text-[var(--muted)]">💸 Take‑home (After Tax)</div>
+              <div className="mt-4 space-y-3 text-[0.72rem]">
+                <div className="flex items-center justify-between border-b border-[var(--border)] pb-2">
+                  <span className="text-[var(--muted)]">Tax regime</span>
+                  <span className="font-semibold text-[var(--accent2)]">
+                    {offerCountry === 'TH' ? '17% LTR Flat' : offerCountry === 'IN' ? 'New Regime' : `${(taxRates[offerCountry] || 0.2) * 100}%`}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between border-b border-[var(--border)] pb-2">
                   <span className="text-[var(--muted)]">Gross annual</span>
                   <span className="font-semibold text-[var(--text)]">{fmt(convert(recurring + signing, 'THB', displayCurrency), displayCurrency)}</span>
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between border-b border-[var(--border)] pb-2">
                   <span className="text-[var(--muted)]">Tax paid</span>
-                  <span className="font-semibold text-[var(--red)]">−{fmt(convert(tax, 'THB', displayCurrency), displayCurrency)}</span>
+                  <span className="font-semibold text-[var(--red)]">−{fmt(convert(tax, 'THB', displayCurrency), displayCurrency)} ({offerCountry === 'IN' ? 'NR' : `${(taxRates[offerCountry] || 0.2) * 100}%`})</span>
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between border-b border-[var(--border)] pb-2">
                   <span className="text-[var(--muted)]">Annual in‑hand</span>
                   <span className="font-semibold text-[var(--green)]">{fmt(convert(takeHome, 'THB', displayCurrency), displayCurrency)}</span>
                 </div>
@@ -360,15 +366,16 @@ export default function SimulatorClient() {
                   <span className="font-semibold text-[var(--green)]">{fmt(convert(takeHome / 12, 'THB', displayCurrency), displayCurrency)}</span>
                 </div>
               </div>
-              <div className="mt-3 rounded-lg border border-[rgba(64,240,160,0.2)] bg-[rgba(64,240,160,0.05)] px-3 py-2 text-[10px] text-[var(--muted)]">
+              <div className="mt-3 rounded-lg border border-[rgba(64,240,160,0.2)] bg-[rgba(64,240,160,0.05)] px-3 py-3 text-[0.6rem] text-[var(--muted)]">
+                <div className="mb-1">vs India monthly in‑hand</div>
                 {(() => {
                   const diff = convert(takeHome / 12, 'THB', baseCurrency) - (currentTakeHome / 12);
                   const label = diff >= 0 ? '+' : '−';
                   const amount = fmt(Math.abs(diff), baseCurrency);
                   return (
-                    <span style={{ color: diff >= 0 ? 'var(--green)' : 'var(--red)', fontWeight: 600 }}>
-                      {label}{amount}/mo {diff >= 0 ? 'more' : 'less'} than {country}
-                    </span>
+                    <div style={{ color: diff >= 0 ? 'var(--green)' : 'var(--red)', fontWeight: 700, fontSize: '0.9rem' }}>
+                      {label}{amount}/mo {diff >= 0 ? 'more' : 'less'} than India
+                    </div>
                   );
                 })()}
               </div>
