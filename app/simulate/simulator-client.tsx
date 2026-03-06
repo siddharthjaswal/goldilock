@@ -322,14 +322,17 @@ export default function SimulatorClient() {
           </div>
 
           <div className="space-y-4 lg:sticky lg:top-6">
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 text-center relative overflow-hidden">
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-7 text-center relative overflow-hidden">
               <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[var(--green)] to-transparent opacity-40" />
-              <div className="text-[10px] uppercase tracking-[0.25em] text-[var(--muted)]">Total compensation (Year 1)</div>
-              <div className="mt-2 font-sans text-4xl font-extrabold text-[var(--green)]">{fmt(displayOffer, displayCurrency)}</div>
-              <div className={`mt-2 inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs ${pctChange >= 0 ? 'border-[rgba(64,240,160,0.3)] bg-[rgba(64,240,160,0.1)] text-[var(--green)]' : 'border-[rgba(240,64,96,0.3)] bg-[rgba(240,64,96,0.1)] text-[var(--red)]'}`}>
+              <div className="text-[0.65rem] uppercase tracking-[0.15em] text-[var(--muted)]">Total compensation (Year 1)</div>
+              <div className="mt-2 font-sans text-[2.4rem] font-extrabold text-[var(--green)] leading-none">{fmt(displayOffer, displayCurrency)}</div>
+              <div className="mt-2 text-[0.8rem] text-[var(--muted)]">
+                ≈ {fmt(convert(offerTC, 'THB', displayCurrency === 'INR' ? 'THB' : 'INR'), displayCurrency === 'INR' ? 'THB' : 'INR')}
+              </div>
+              <div className={`mt-3 inline-flex items-center gap-1 rounded-full border px-4 py-1 text-[0.95rem] font-semibold ${pctChange >= 0 ? 'border-[rgba(64,240,160,0.3)] bg-[rgba(64,240,160,0.1)] text-[var(--green)]' : 'border-[rgba(240,64,96,0.3)] bg-[rgba(240,64,96,0.1)] text-[var(--red)]'}`}>
                 {pctChange >= 0 ? '↑' : '↓'} {Math.abs(pctChange).toFixed(0)}%
               </div>
-              <div className="mt-2 text-xs text-[var(--muted)]">vs baseline {fmt(displayCurrent, displayCurrency)}</div>
+              <div className="mt-2 text-[0.62rem] text-[var(--muted)]">vs current {fmt(displayCurrent, displayCurrency)} CTC</div>
             </div>
 
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
