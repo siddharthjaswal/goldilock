@@ -160,15 +160,18 @@ export default function SimulatorClient() {
                   </div>
                 ))}
               </div>
-              <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface2)] p-4 flex justify-between">
+              <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface2)] p-4 flex items-center justify-between">
                 <div>
                   <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">Annual take‑home</div>
-                  <div className="mt-1 font-sans text-sm font-bold text-[var(--green)]">{fmt(convert(currentTakeHome, baseCurrency, displayCurrency), displayCurrency)}</div>
+                  <div className="mt-1 font-sans text-sm font-bold text-[var(--green)]">
+                    {fmt(convert(currentTakeHome, baseCurrency, displayCurrency), displayCurrency)}
+                  </div>
+                  <div className="mt-1 text-[10px] text-[var(--muted)]">After New Regime tax</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">Tax rate</div>
-                  <div className="mt-1 text-xs text-[var(--red)]">
-                    {country === 'IN' ? 'New Regime' : `${(taxRates[country] || 0.2) * 100}%`}
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">Monthly in‑hand</div>
+                  <div className="mt-1 font-sans text-sm font-bold text-[var(--green)]">
+                    {fmt(convert(currentTakeHome / 12, baseCurrency, displayCurrency), displayCurrency)}
                   </div>
                 </div>
               </div>
