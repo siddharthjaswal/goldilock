@@ -36,14 +36,21 @@ export default function Home() {
   return (
     <div className="relative z-10">
       <div className="mx-auto max-w-5xl px-6 py-16">
-        <header className="flex flex-col gap-3">
-          <h1 className="font-sans text-4xl font-extrabold tracking-tight text-[var(--accent)]">Goldilock Zone</h1>
-          <p className="text-sm uppercase tracking-[0.2em] text-[var(--muted)]">Know your baseline before you negotiate</p>
+        <header className="flex flex-wrap items-start justify-between gap-4">
+          <div className="flex flex-col gap-3">
+            <h1 className="font-sans text-4xl font-extrabold tracking-tight text-[var(--accent)]">Goldilock Zone</h1>
+            <p className="text-[11px] uppercase tracking-[0.35em] text-[var(--muted)]">Know your baseline before you negotiate</p>
+          </div>
+          <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(64,192,240,0.35)] bg-[rgba(64,192,240,0.12)] px-3 py-1 text-[10px] text-[var(--accent2)]">
+            <span>⚡</span>
+            <span>Cloud‑free · Local‑only</span>
+          </div>
         </header>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8">
-            <div className="mb-6 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Current compensation</div>
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 relative overflow-hidden">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent opacity-40" />
+            <div className="mb-6 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">Current compensation</div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="text-xs text-[var(--muted)]">
@@ -115,8 +122,9 @@ export default function Home() {
             </button>
           </div>
 
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8">
-            <div className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">What you’ll get</div>
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 relative overflow-hidden">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent opacity-40" />
+            <div className="mb-3 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--muted)]">What you’ll get</div>
             <ul className="space-y-3 text-sm text-[var(--text)]">
               <li>• Live offer simulation with sliders</li>
               <li>• Take‑home breakdown after tax</li>
