@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { convertCurrency, indiaTax, calcOffer, changePct } from '@/lib/comp';
 
 const fallbackRates: Record<string, number> = {
   USD: 1,
@@ -23,29 +24,6 @@ const taxRates: Record<string, number> = {
   TH: 0.17,
   AE: 0.0,
   DE: 0.32,
-};
-
-const indiaTax = (income: number) => {
-  const taxable = Math.max(0, income - 75000);
-  let tax = 0;
-  const slabs: Array<[number, number]> = [
-    [300000, 0],
-    [400000, 0.05],
-    [300000, 0.1],
-    [200000, 0.15],
-    [300000, 0.2],
-    [Infinity, 0.3],
-  ];
-  let remaining = taxable;
-  for (const [size, rate] of slabs) {
-    if (remaining <= 0) break;
-    const chunk = Math.min(remaining, size);
-    tax += chunk * rate;
-    remaining -= chunk;
-  }
-  if (taxable <= 700000) tax = 0;
-  tax = tax * 1.04;
-  return tax;
 };
 
 const currencySymbols: Record<string, string> = {
@@ -85,12 +63,7 @@ export default function SimulatorClient() {
       .catch(() => null);
   }, []);
 
-  const convert = (amount: number, from: string, to: string) => {
-    const fromRate = rates[from] || 1;
-    const toRate = rates[to] || 1;
-    const usd = amount / fromRate;
-    return usd * toRate;
-  };
+  const convert = (amount: number, from: string, to: string) => convertCurrency(amount, from, to, rates);
 
   const fmt = (amount: number, currency: string) => {
     const symbol = currencySymbols[currency] || '';
@@ -107,30 +80,30 @@ export default function SimulatorClient() {
   const currentTax = country === 'IN' ? indiaTax(currentTC) : currentTC * (taxRates[country] || 0.2);
   const currentTakeHome = currentTC - currentTax;
 
-  const baseAnnual = baseMonthly * 12;
-  const bonusAnnual = baseAnnual * (bonusPct / 100);
-  const offerTC = baseAnnual + bonusAnnual + equityAnnual + signing;
-  const recurring = baseAnnual + bonusAnnual + equityAnnual;
+  const offer = calcOffer({ baseMonthly, bonusPct, equityAnnual, signing });
+  const offerTC = offer.offerTotal;
+  const recurring = offer.recurring;
   const tax = country === 'IN' ? indiaTax(recurring) : recurring * (taxRates[country] || 0.2);
   const takeHome = recurring - tax + signing;
 
+  const offerInBase = convert(offerTC, 'THB', baseCurrency);
   const displayCurrent = useMemo(() => convert(currentTC, baseCurrency, displayCurrency), [currentTC, baseCurrency, displayCurrency, rates]);
   const displayOffer = useMemo(() => convert(offerTC, 'THB', displayCurrency), [offerTC, displayCurrency, rates]);
 
-  const changePct = ((offerTC - currentTC) / Math.max(currentTC, 1)) * 100;
+  const pctChange = changePct(offerInBase, currentTC);
 
   const verdict = () => {
-    if (changePct < 5) return { emoji: '🚨', title: 'Lowball — Walk', desc: 'This doesn’t clear the bar. Push hard or walk.', color: 'var(--red)' };
-    if (changePct < 15) return { emoji: '😬', title: 'Meh — Push Back', desc: 'Marginal improvement. Negotiate base or signing.', color: 'var(--red)' };
-    if (changePct < 30) return { emoji: '✅', title: 'Strong Offer', desc: 'Meaningful step up. Solid if role fits.', color: 'var(--green)' };
+    if (pctChange < 5) return { emoji: '🚨', title: 'Lowball — Walk', desc: 'This doesn’t clear the bar. Push hard or walk.', color: 'var(--red)' };
+    if (pctChange < 15) return { emoji: '😬', title: 'Meh — Push Back', desc: 'Marginal improvement. Negotiate base or signing.', color: 'var(--red)' };
+    if (pctChange < 30) return { emoji: '✅', title: 'Strong Offer', desc: 'Meaningful step up. Solid if role fits.', color: 'var(--green)' };
     return { emoji: '💎', title: 'Goldmine', desc: 'Exceptional package. Lock it in.', color: '#b040f0' };
   };
 
   const v = verdict();
 
   const bars = [
-    { id: 'base', label: 'Base', value: baseAnnual },
-    { id: 'bonus', label: 'Bonus', value: bonusAnnual },
+    { id: 'base', label: 'Base', value: offer.baseAnnual },
+    { id: 'bonus', label: 'Bonus', value: offer.bonusAnnual },
     { id: 'equity', label: 'RSUs', value: equityAnnual },
     { id: 'sign', label: 'Signing', value: signing },
   ];
@@ -346,8 +319,8 @@ export default function SimulatorClient() {
               <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[var(--green)] to-transparent opacity-40" />
               <div className="text-[10px] uppercase tracking-[0.25em] text-[var(--muted)]">Total compensation (Year 1)</div>
               <div className="mt-2 font-sans text-4xl font-extrabold text-[var(--green)]">{fmt(displayOffer, displayCurrency)}</div>
-              <div className={`mt-2 inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs ${changePct >= 0 ? 'border-[rgba(64,240,160,0.3)] bg-[rgba(64,240,160,0.1)] text-[var(--green)]' : 'border-[rgba(240,64,96,0.3)] bg-[rgba(240,64,96,0.1)] text-[var(--red)]'}`}>
-                {changePct >= 0 ? '↑' : '↓'} {Math.abs(changePct).toFixed(0)}%
+              <div className={`mt-2 inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs ${pctChange >= 0 ? 'border-[rgba(64,240,160,0.3)] bg-[rgba(64,240,160,0.1)] text-[var(--green)]' : 'border-[rgba(240,64,96,0.3)] bg-[rgba(240,64,96,0.1)] text-[var(--red)]'}`}>
+                {pctChange >= 0 ? '↑' : '↓'} {Math.abs(pctChange).toFixed(0)}%
               </div>
               <div className="mt-2 text-xs text-[var(--muted)]">vs baseline {fmt(displayCurrent, displayCurrency)}</div>
             </div>
