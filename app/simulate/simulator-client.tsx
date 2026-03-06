@@ -294,7 +294,7 @@ export default function SimulatorClient() {
                     <div className="bg-[var(--green)] flex-[3]" />
                   </div>
                   <div className="mt-1 flex justify-between text-[0.55rem] text-[var(--muted)]">
-                    <span>⚠ Below visa floor</span>
+                    <span>{row.label === 'Base salary' ? '⚠ Below visa floor' : '⚠ Below floor'}</span>
                     <span>✓ Sweet spot</span>
                     <span>★ Exceptional</span>
                   </div>
