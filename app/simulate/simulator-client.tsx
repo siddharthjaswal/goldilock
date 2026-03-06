@@ -277,30 +277,30 @@ export default function SimulatorClient() {
                   <div className="mt-2 flex justify-between text-[10px] text-[var(--muted)]">
                     <span>
                       {row.label === 'Base salary'
-                        ? `${fmt(convert(row.min, baseCurrency, displayCurrency), displayCurrency)} · ${row.range[0]}`
+                        ? `฿180k · ${row.range[0]}`
                         : row.label === 'Performance bonus'
                         ? `0% · ${row.range[0]}`
                         : row.label === 'Stock / RSUs'
-                        ? `${fmt(convert(row.min, baseCurrency, displayCurrency), displayCurrency)} · ${row.range[0]}`
-                        : `${fmt(convert(row.min, baseCurrency, displayCurrency), displayCurrency)} · ${row.range[0]}`}
+                        ? `฿0 · ${row.range[0]}`
+                        : `฿0 · ${row.range[0]}`}
                     </span>
                     <span>
                       {row.label === 'Base salary'
-                        ? `${fmt(convert(280000, baseCurrency, displayCurrency), displayCurrency)} · ${row.range[1]}`
+                        ? `฿280k · ${row.range[1]}`
                         : row.label === 'Performance bonus'
                         ? `15–20% · ${row.range[1]}`
                         : row.label === 'Stock / RSUs'
-                        ? `${fmt(convert(850000, baseCurrency, displayCurrency), displayCurrency)} · ${row.range[1]}`
-                        : `${fmt(convert(700000, baseCurrency, displayCurrency), displayCurrency)} · ${row.range[1]}`}
+                        ? `฿850k · ${row.range[1]}`
+                        : `฿700k · ${row.range[1]}`}
                     </span>
                     <span>
                       {row.label === 'Base salary'
-                        ? `${fmt(convert(row.max, baseCurrency, displayCurrency), displayCurrency)} · ${row.range[2]}`
+                        ? `฿380k · ${row.range[2]}`
                         : row.label === 'Performance bonus'
                         ? `30% · ${row.range[2]}`
                         : row.label === 'Stock / RSUs'
-                        ? `${fmt(convert(1500000, baseCurrency, displayCurrency), displayCurrency)} · ${row.range[2]}`
-                        : `${fmt(convert(1200000, baseCurrency, displayCurrency), displayCurrency)} · ${row.range[2]}`}
+                        ? `฿1.5M · ${row.range[2]}`
+                        : `฿1.2M · ${row.range[2]}`}
                     </span>
                   </div>
                   <div className="mt-2 h-[3px] rounded-full overflow-hidden flex">
