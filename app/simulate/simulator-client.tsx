@@ -47,7 +47,8 @@ export default function SimulatorClient() {
   const currentEquity = Number(params.get('equity') || 0);
 
   const [rates, setRates] = useState<Record<string, number>>(fallbackRates);
-  const [displayCurrency, setDisplayCurrency] = useState(baseCurrency);
+  const [displayCurrency, setDisplayCurrency] = useState(baseCurrency === 'THB' ? 'THB' : 'INR');
+  const [isTHB, setIsTHB] = useState(baseCurrency === 'THB');
 
   const [baseMonthly, setBaseMonthly] = useState(280000);
   const [bonusPct, setBonusPct] = useState(20);
@@ -111,30 +112,33 @@ export default function SimulatorClient() {
 
   return (
     <div className="relative z-10">
-      <div className="mx-auto max-w-6xl px-6 py-12">
-        <header className="mb-10 flex flex-wrap items-center justify-between gap-4">
+      <div className="mx-auto max-w-[1100px] px-6 py-10">
+        <header className="mb-12 flex flex-wrap items-start justify-between gap-5">
           <div>
-            <h1 className="font-sans text-3xl font-extrabold tracking-tight text-[var(--accent)]">Goldilock Simulator</h1>
-            <p className="text-[10px] uppercase tracking-[0.35em] text-[var(--muted)]">Offer builder + live verdict</p>
+            <h1 className="font-sans text-[2.2rem] font-extrabold tracking-tight text-[var(--accent)] leading-[1.1]">Goldilock Simulator</h1>
+            <p className="mt-1 text-[0.78rem] uppercase tracking-[0.1em] text-[var(--muted)]">Offer builder + live verdict</p>
           </div>
           <div className="flex flex-col items-end gap-2">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1">
-              <span className={`text-[11px] font-semibold ${displayCurrency === baseCurrency ? 'text-[var(--accent)]' : 'text-[var(--muted)]'}`}>
-                {baseCurrency}
-              </span>
-              <select
-                value={displayCurrency}
-                onChange={(e) => setDisplayCurrency(e.target.value)}
-                className="rounded-full border border-[var(--border)] bg-[var(--surface2)] px-3 py-1 text-[10px] text-[var(--text)]"
+            <div className="flex items-center gap-3 rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-2">
+              <span className={`font-sans text-[0.85rem] font-semibold ${!isTHB ? 'text-[var(--accent)]' : 'text-[var(--muted)]'}`}>₹ INR</span>
+              <button
+                type="button"
+                onClick={() => {
+                  const next = !isTHB;
+                  setIsTHB(next);
+                  setDisplayCurrency(next ? 'THB' : 'INR');
+                }}
+                className={`relative h-[26px] w-[48px] rounded-full border border-[var(--border)] ${isTHB ? 'bg-[rgba(240,192,64,0.15)] border-[var(--accent)]' : 'bg-[var(--surface2)]'}`}
               >
-                {Object.keys(fallbackRates).map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
+                <span
+                  className={`absolute top-[3px] left-[3px] h-[18px] w-[18px] rounded-full transition-all duration-300 ${isTHB ? 'translate-x-[20px] bg-[var(--accent)] shadow-[0_0_12px_rgba(240,192,64,0.5)]' : 'bg-[var(--muted)]'}`}
+                />
+              </button>
+              <span className={`font-sans text-[0.85rem] font-semibold ${isTHB ? 'text-[var(--accent)]' : 'text-[var(--muted)]'}`}>฿ THB</span>
             </div>
             <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(64,192,240,0.35)] bg-[rgba(64,192,240,0.12)] px-3 py-1 text-[10px] text-[var(--accent2)]">
               <span>⚡</span>
-              <span>Cloud‑free · Local‑only</span>
+              <span>India: New Regime · Thailand: 17% LTR Flat</span>
             </div>
             <Link href="/" className="text-[10px] text-[var(--muted)] underline">Edit baseline</Link>
           </div>
