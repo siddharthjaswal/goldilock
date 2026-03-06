@@ -84,7 +84,7 @@ export default function Home() {
                 <input
                   value={base}
                   onChange={(e) => setBase(e.target.value)}
-                  placeholder="e.g. 6200000"
+                  placeholder="e.g. 5400000"
                   className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm text-[var(--text)]"
                 />
               </label>
@@ -94,7 +94,7 @@ export default function Home() {
                 <input
                   value={bonus}
                   onChange={(e) => setBonus(e.target.value)}
-                  placeholder="e.g. 200000"
+                  placeholder="e.g. 350000"
                   className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm text-[var(--text)]"
                 />
               </label>
@@ -104,7 +104,7 @@ export default function Home() {
                 <input
                   value={equity}
                   onChange={(e) => setEquity(e.target.value)}
-                  placeholder="e.g. 1980000"
+                  placeholder="e.g. 1250000"
                   className="mt-2 w-full rounded-lg border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm text-[var(--text)]"
                 />
               </label>
