@@ -32,6 +32,7 @@ Negotiation happens in the dark. Candidates lack tools to model tradeoffs betwee
 - New offer builder (base, bonus %, equity, signing)
 - Tax profile toggle (country or preset)
 - Currency toggle
+- Live FX rates for top tech currencies
 
 ### Outputs
 - Total compensation (Year 1)
@@ -41,7 +42,7 @@ Negotiation happens in the dark. Candidates lack tools to model tradeoffs betwee
 - Verdict card with suggestion
 
 ### Visuals
-- Modern “negotiation cockpit” UI
+- Modern “negotiation cockpit” UI (based on the provided HTML)
 - Clear interactive sliders
 - Big TC number + delta
 
@@ -65,8 +66,25 @@ Negotiation happens in the dark. Candidates lack tools to model tradeoffs betwee
 - Web app (Next.js + Tailwind)
 - Stateless client‑side calculations
 - Preset tax profiles
+- Live FX via a free rates API (cached, daily refresh)
+- Top tech currencies: USD, EUR, GBP, INR, SGD, CAD, AUD, THB, AED
 
-## 12) Future Ideas
+## 12) Information Architecture & Screens
+### Screen 1 — Current Details (Intake)
+**Goal:** capture baseline comp + location/tax profile
+- Fields: country, currency, base (annual), bonus (annual), equity (annualized), other
+- Toggle: tax regime (preset)
+- CTA: **Continue →**
+
+### Screen 2 — Goldilock Simulator
+**Goal:** interactive negotiation cockpit
+- Offer sliders: base, bonus %, equity, signing
+- Live TC + take‑home panel
+- Verdict engine (lowball → goldmine)
+- Currency toggle (live FX)
+- Save / share summary
+
+## 13) Future Ideas
 - Offer templates by company/level
 - Market benchmarks (levels.fyi style)
 - Save/share negotiation profile
