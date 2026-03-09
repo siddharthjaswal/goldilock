@@ -195,7 +195,7 @@ export default function SimulatorClient() {
               <div className="mb-6 text-[0.7rem] font-semibold uppercase tracking-[0.15em] text-[var(--muted)]">🪙 Offer Builder — Drag to Negotiate</div>
 
               {(() => {
-                const baseMin = baseMonthlyFromCurrent * 0.7;
+                const baseMin = baseMonthlyFromCurrent;
                 const baseMax = baseMonthlyFromCurrent * 1.35;
                 const bonusMax = Math.max(30, Math.round(bonusPctFromCurrent * 1.5));
                 const equityMax = Math.max(equityFromCurrent * 1.8, equityFromCurrent + 100000);
