@@ -51,11 +51,6 @@ export default function SimulatorClient() {
   const [displayCurrency, setDisplayCurrency] = useState(baseCurrency === 'THB' ? 'THB' : 'INR');
   const [isTHB, setIsTHB] = useState(baseCurrency === 'THB');
 
-  const [baseMonthly, setBaseMonthly] = useState(280000);
-  const [bonusPct, setBonusPct] = useState(20);
-  const [equityAnnual, setEquityAnnual] = useState(850000);
-  const [signing, setSigning] = useState(700000);
-
   useEffect(() => {
     fetch('https://open.er-api.com/v6/latest/USD')
       .then((res) => res.json())
@@ -66,6 +61,15 @@ export default function SimulatorClient() {
   }, []);
 
   const convert = (amount: number, from: string, to: string) => convertCurrency(amount, from, to, rates);
+
+  const baseMonthlyFromCurrent = currentBase ? convert(currentBase, baseCurrency, 'THB') / 12 : 280000;
+  const bonusPctFromCurrent = currentBase ? Math.min(30, Math.round((currentBonus / Math.max(currentBase, 1)) * 100)) : 20;
+  const equityFromCurrent = currentEquity ? convert(currentEquity, baseCurrency, 'THB') : 850000;
+
+  const [baseMonthly, setBaseMonthly] = useState(baseMonthlyFromCurrent);
+  const [bonusPct, setBonusPct] = useState(bonusPctFromCurrent);
+  const [equityAnnual, setEquityAnnual] = useState(equityFromCurrent);
+  const [signing, setSigning] = useState(equityFromCurrent * 0.8);
 
   const fmt = (amount: number, currency: string) => {
     const symbol = currencySymbols[currency] || '';
@@ -190,52 +194,64 @@ export default function SimulatorClient() {
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent opacity-40" />
               <div className="mb-6 text-[0.7rem] font-semibold uppercase tracking-[0.15em] text-[var(--muted)]">🪙 Offer Builder — Drag to Negotiate</div>
 
-              {[
-                {
-                  label: 'Base salary',
-                  tag: 'Monthly',
-                  value: baseMonthly,
-                  set: setBaseMonthly,
-                  min: 180000,
-                  max: 380000,
-                  step: 5000,
-                  range: ['Lowball', 'Target', 'Goldmine'],
-                  suffix: '',
-                },
-                {
-                  label: 'Performance bonus',
-                  tag: '% of base',
-                  value: bonusPct,
-                  set: setBonusPct,
-                  min: 0,
-                  max: 30,
-                  step: 1,
-                  range: ['None', 'Standard', 'Top band'],
-                  suffix: '%',
-                },
-                {
-                  label: 'Stock / RSUs',
-                  tag: 'Annual grant',
-                  value: equityAnnual,
-                  set: setEquityAnnual,
-                  min: 0,
-                  max: 1500000,
-                  step: 50000,
-                  range: ['No equity', 'Target', 'Exceptional'],
-                  suffix: '',
-                },
-                {
-                  label: 'Signing bonus',
-                  tag: 'One‑time',
-                  value: signing,
-                  set: setSigning,
-                  min: 0,
-                  max: 1200000,
-                  step: 50000,
-                  range: ['Not covered', 'ESOP whole', 'Full upside'],
-                  suffix: '',
-                },
-              ].map((row, idx) => (
+              {(() => {
+                const baseMin = baseMonthlyFromCurrent * 0.7;
+                const baseMax = baseMonthlyFromCurrent * 1.35;
+                const bonusMax = Math.max(30, Math.round(bonusPctFromCurrent * 1.5));
+                const equityMax = Math.max(equityFromCurrent * 1.8, equityFromCurrent + 100000);
+                const signingMax = Math.max(equityFromCurrent * 1.6, equityFromCurrent + 100000);
+
+                return [
+                  {
+                    label: 'Base salary',
+                    tag: 'Monthly',
+                    value: baseMonthly,
+                    set: setBaseMonthly,
+                    min: Math.round(baseMin / 5000) * 5000,
+                    max: Math.round(baseMax / 5000) * 5000,
+                    step: 5000,
+                    range: ['Lowball', 'Target', 'Goldmine'],
+                    suffix: '',
+                    target: baseMonthlyFromCurrent,
+                  },
+                  {
+                    label: 'Performance bonus',
+                    tag: '% of base',
+                    value: bonusPct,
+                    set: setBonusPct,
+                    min: 0,
+                    max: bonusMax,
+                    step: 1,
+                    range: ['None', 'Standard', 'Top band'],
+                    suffix: '%',
+                    target: bonusPctFromCurrent,
+                  },
+                  {
+                    label: 'Stock / RSUs',
+                    tag: 'Annual grant',
+                    value: equityAnnual,
+                    set: setEquityAnnual,
+                    min: 0,
+                    max: Math.round(equityMax / 50000) * 50000,
+                    step: 50000,
+                    range: ['No equity', 'Target', 'Exceptional'],
+                    suffix: '',
+                    target: equityFromCurrent,
+                  },
+                  {
+                    label: 'Signing bonus',
+                    tag: 'One‑time',
+                    value: signing,
+                    set: setSigning,
+                    min: 0,
+                    max: Math.round(signingMax / 50000) * 50000,
+                    step: 50000,
+                    range: ['Not covered', 'ESOP whole', 'Full upside'],
+                    suffix: '',
+                    target: equityFromCurrent * 0.8,
+                  },
+                ];
+              })().map((row, idx) => (
                 <div key={row.label} className="mb-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-[0.9rem] font-sans font-semibold text-[var(--text)]">
@@ -262,30 +278,30 @@ export default function SimulatorClient() {
                   <div className="mt-3 flex justify-between text-[0.6rem] text-[var(--muted)]">
                     <span>
                       {row.label === 'Base salary'
-                        ? `${fmt(convert(180000, 'THB', displayCurrency), displayCurrency)} · ${row.range[0]}`
+                        ? `${fmt(convert(row.min, 'THB', displayCurrency), displayCurrency)} · ${row.range[0]}`
                         : row.label === 'Performance bonus'
                         ? `0% · ${row.range[0]}`
                         : row.label === 'Stock / RSUs'
-                        ? `${fmt(convert(0, 'THB', displayCurrency), displayCurrency)} · ${row.range[0]}`
-                        : `${fmt(convert(0, 'THB', displayCurrency), displayCurrency)} · ${row.range[0]}`}
+                        ? `${fmt(convert(row.min, 'THB', displayCurrency), displayCurrency)} · ${row.range[0]}`
+                        : `${fmt(convert(row.min, 'THB', displayCurrency), displayCurrency)} · ${row.range[0]}`}
                     </span>
                     <span>
                       {row.label === 'Base salary'
-                        ? `${fmt(convert(280000, 'THB', displayCurrency), displayCurrency)} · ${row.range[1]}`
+                        ? `${fmt(convert(row.target, 'THB', displayCurrency), displayCurrency)} · ${row.range[1]}`
                         : row.label === 'Performance bonus'
                         ? `15–20% · ${row.range[1]}`
                         : row.label === 'Stock / RSUs'
-                        ? `${fmt(convert(850000, 'THB', displayCurrency), displayCurrency)} · ${row.range[1]}`
-                        : `${fmt(convert(700000, 'THB', displayCurrency), displayCurrency)} · ${row.range[1]}`}
+                        ? `${fmt(convert(row.target, 'THB', displayCurrency), displayCurrency)} · ${row.range[1]}`
+                        : `${fmt(convert(row.target, 'THB', displayCurrency), displayCurrency)} · ${row.range[1]}`}
                     </span>
                     <span>
                       {row.label === 'Base salary'
-                        ? `${fmt(convert(380000, 'THB', displayCurrency), displayCurrency)} · ${row.range[2]}`
+                        ? `${fmt(convert(row.max, 'THB', displayCurrency), displayCurrency)} · ${row.range[2]}`
                         : row.label === 'Performance bonus'
                         ? `30% · ${row.range[2]}`
                         : row.label === 'Stock / RSUs'
-                        ? `${fmt(convert(1500000, 'THB', displayCurrency), displayCurrency)} · ${row.range[2]}`
-                        : `${fmt(convert(1200000, 'THB', displayCurrency), displayCurrency)} · ${row.range[2]}`}
+                        ? `${fmt(convert(row.max, 'THB', displayCurrency), displayCurrency)} · ${row.range[2]}`
+                        : `${fmt(convert(row.max, 'THB', displayCurrency), displayCurrency)} · ${row.range[2]}`}
                     </span>
                   </div>
                   {row.label === 'Base salary' && (
